@@ -105,7 +105,9 @@ class PppppongGame {
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
         this.scoreBoard = document.getElementById('scoreBoard');
+        this.scoreElement = document.getElementById('score');
         this.gameContainer = document.getElementById('gameContainer');
+        this.canvasContainer = document.getElementById('canvasContainer');
 
         this.player1 = new Player('player_1', 'blue', 'w', 's');
         this.player2 = new Player('player_2', 'red', 'ArrowUp', 'ArrowDown');
@@ -134,22 +136,20 @@ class PppppongGame {
 
         this.powerups = [];
         this.lastPowerUpTime = 0;
-
-        this.resizeCanvas();
-        this.addEventListeners();
     }
 
     resizeCanvas() {
-        const containerStyle = window.getComputedStyle(this.gameContainer);
-        const paddingX = parseFloat(containerStyle.paddingLeft) + parseFloat(containerStyle.paddingRight);
-        const paddingY = parseFloat(containerStyle.paddingTop) + parseFloat(containerStyle.paddingBottom);
+        const containerRect = this.canvasContainer.getBoundingClientRect();
 
-        this.canvas.width = this.gameContainer.clientWidth - paddingX;
-        this.canvas.height = this.gameContainer.clientHeight - this.scoreBoard.offsetHeight - paddingY;
-        
+        // Set the canvas size to match the container
+        this.canvas.width = containerRect.width;
+        this.canvas.height = containerRect.height;
+
+        // Update game dimensions
         this.initializeGameDimensions();
         this.updateScoreboardStyle();
 
+        // Redraw the game
         this.drawGame();
     }
 
@@ -231,7 +231,7 @@ class PppppongGame {
     }
 
     updateScore() {
-        this.scoreBoard.textContent = `Player 1: ${this.player1.score} | Player 2: ${this.player2.score}`;
+        this.scoreElement.textContent = `Player 1: ${this.player1.score} | Player 2: ${this.player2.score}`;
     }
 
     checkWallCollision() {
@@ -478,17 +478,19 @@ class PppppongGame {
     }
 
     start() {
-        // Trigger a manual resize to ensure all dimensions are set correctly
-        this.resizeCanvas();
+        this.addEventListeners();
         
-        // Short delay to allow for any final rendering
-        setTimeout(() => {
+        // Use requestAnimationFrame to ensure the DOM has updated before resizing
+        requestAnimationFrame(() => {
+            this.resizeCanvas();
             this.resetGameState();
             this.update(performance.now());
-        }, 50);
+        });
     }
 }
 
 // Start the game
-const game = new PppppongGame();
-game.start();
+document.addEventListener('DOMContentLoaded', () => {
+    const game = new PppppongGame();
+    game.start();
+});

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PPPPPONG</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         body, html {
             margin: 0;
@@ -11,6 +12,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
+            font-family: 'Press Start 2P', cursive;
         }
         #gameContainer {
             width: 100%;
@@ -22,22 +24,126 @@
         }
         #scoreBoard {
             color: white;
-            font-family: Arial, sans-serif;
             background-color: #333;
             text-align: center;
-            margin-bottom: 10px;
+            padding: 10px;
+            position: relative;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        #canvasContainer {
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
         }
         #gameCanvas {
-            flex-grow: 1;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-color: #f0f0f0;
+        }
+        #helpIcon {
+            position: absolute;
+            right: 32px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 48px;
+            background-color: white;
+            color: #333;
+            width: 64px;
+            height: 64px;
+            line-height: 64px;
+            border-radius: 50%;
+            text-align: center;
+        }
+        #instructionsOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+        #instructionsBox {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #000;
+            border: 4px solid #fff;
+            color: #fff;
+            padding: 20px;
+            font-size: 18px;
+            text-align: left;
+            line-height: 1.6;
+            max-width: 90%;
+        }
+        #instructionsBox h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        #instructionsBox ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 10px 0;
+        }
+        #closeInstructions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
         }
     </style>
 </head>
 <body>
     <div id="gameContainer">
-        <div id="scoreBoard"></div>
-        <canvas id="gameCanvas"></canvas>
+        <div id="scoreBoard">
+            <span id="score"></span>
+            <span id="helpIcon">?</span>
+        </div>
+        <div id="canvasContainer">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+    </div>
+    <div id="instructionsOverlay">
+        <div id="instructionsBox">
+            <span id="closeInstructions">X</span>
+            <h3>CONTROLS</h3>
+            <p>PLAYER 1 (BLUE): W/S<br>PLAYER 2 (RED): UP/DOWN</p>
+            <h3>GAMEPLAY</h3>
+            <ul>
+                <li>* EACH PLAYER STARTS WITH 5 PADDLES</li>
+                <li>* SCORE TO GAIN OPPONENT'S PADDLE</li>
+                <li>* FIRST TO CONTROL ALL PADDLES WINS</li>
+            </ul>
+        </div>
     </div>
     <script src="pppppongine.js"></script>
+    <script>
+        const helpIcon = document.getElementById('helpIcon');
+        const instructionsOverlay = document.getElementById('instructionsOverlay');
+        const closeInstructions = document.getElementById('closeInstructions');
+
+        helpIcon.addEventListener('click', () => {
+            instructionsOverlay.style.display = 'block';
+        });
+
+        closeInstructions.addEventListener('click', () => {
+            instructionsOverlay.style.display = 'none';
+        });
+
+        instructionsOverlay.addEventListener('click', (e) => {
+            if (e.target === instructionsOverlay) {
+                instructionsOverlay.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
